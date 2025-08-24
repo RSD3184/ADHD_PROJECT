@@ -73,7 +73,7 @@ main {
   border: 2px solid #f4d4a3;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   width: 250px;
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -81,7 +81,7 @@ main {
 
 .game-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0px 8px 15px rgba(0,0,0,0.15);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.15);
 }
 
 button {
@@ -119,5 +119,71 @@ footer {
 
   .game-card {
     width: 90%;
+  }
+}
+
+/*memory game*/
+/* Memory Game */
+.game-section {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(4, 120px);
+  /* 4 columns of bigger cards */
+  gap: 15px;
+  /* space between cards */
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.card {
+  width: 120px;
+  height: 120px;
+  background: #ffb84d;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.card.flipped {
+  background: #fdfcf7;
+  transform: rotateY(180deg);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#match-message {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: black;
+  text-align: center;
+  margin-bottom: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#match-message.show {
+  opacity: 1;
+}
+
+
+/* Responsive for smaller screens */
+@media (max-width: 600px) {
+  .game-board {
+    grid-template-columns: repeat(3, 90px);
+    /* 3 per row on mobile */
+    gap: 10px;
+  }
+
+  .card {
+    width: 90px;
+    height: 90px;
+    font-size: 1.5rem;
   }
 }
