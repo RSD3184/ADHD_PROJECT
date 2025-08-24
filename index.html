@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+   <!-- Floating particles background -->
+  <canvas id="background"></canvas>
   <!-- Navbar -->
   <nav class="navbar">
     <div class="logo">ADHD Games</div>
@@ -23,6 +25,7 @@
     <h1>ADHD Games</h1>
     <p>Fun, focus, and progress</p>
   </header>
+  
 
   <!-- Main Content -->
   <main class="games-container">
@@ -33,9 +36,10 @@
     </section>
 
     <section class="game-card">
-      <h2>⏱Reaction Game</h2>
+      <h2>Reaction Game</h2>
       <p>Boost attention with quick responses.</p>
-      <button onclick="startGame('reaction')">Play Now</button>
+      <button onclick="window.location.href='reaction.html'">Play Now</button>
+    </section>
     </section>
   </main>
   <!-- Footer -->
