@@ -19,7 +19,7 @@ function startLevel(lvl) {
   lockBoard = false;
   matchesFound = 0;
 
-  totalPairs = 3 + lvl; // gradual increase (4 pairs at L1 → 13 pairs at L10)
+  totalPairs = Math.min(3 + lvl,9); // max 9 pairs(18 cards)
   let selected = allSymbols.slice(0, totalPairs);
   let symbols = [...selected, ...selected]; // duplicate for pairs
 
