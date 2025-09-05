@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Simple layout improvements */
+    .games-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 2rem;
+      gap: 2rem;
+    }
+
+    #charts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+      background: #fdfcf7;
+      border: 2px solid #f4d4a3;
+      border-radius: 10px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    #performance-summary {
+      text-align: center;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #fffdf8;
+      border: 2px solid #f4d4a3;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">ADHD Games</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+    </ul>
+  </nav>
+
+  <main class="games-container">
+    <section id="performance" class="game-section">
+      <h2>Performance Dashboard</h2>
+      <p>Track your progress across Memory and Reaction games.</p>
+
+      <div id="charts-container">
+        <canvas id="memoryChart"></canvas>
+        <canvas id="reactionChart"></canvas>
+      </div>
+
+      <div id="performance-summary">
+        <h3>Summary</h3>
+        <p id="summary-text">Play some games to see your progress here!</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Get stored data
+    const memoryScores = JSON.parse(sessionStorage.getItem("memoryScores")) || [];
+    const reactionTimes = JSON.parse(sessionStorage.getItem("reactionTimes")) || [];
+
+    // Summary text with accurate level counts
+    const summaryText = document.getElementById("summary-text");
+    summaryText.textContent = `Memory Levels Completed: ${memoryScores.length}, Reaction Levels Completed: ${reactionTimes.length}`;
+
+    // Memory chart
+    const memoryCtx = document.getElementById("memoryChart").getContext("2d");
+    new Chart(memoryCtx, {
+      type: "bar",
+      data: {
+        labels: memoryScores.map((_, i) => `Level ${i+1}`),
+        datasets: [{
+          label: "Memory Score",
+          data: memoryScores,
+          backgroundColor: "#3498db"
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Memory Game Scores' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    // Reaction chart
+    const reactionCtx = document.getElementById("reactionChart").getContext("2d");
+    new Chart(reactionCtx, {
+      type: "bar",
+      data: {
+        labels: reactionTimes.map((_, i) => `Level ${i+1}`),
+        datasets: [{
+          label: "Reaction Time (s)",
+          data: reactionTimes,
+          backgroundColor: "#e74c3c"
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Reaction Game Times (s)' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -7,7 +7,6 @@ let startTime, timeoutId;
 let level = 1;
 let isClickable = false;
 
-// List of colors with readable names and actual values
 const colors = [
   { name: "green", value: "#2ecc71" },
   { name: "blue", value: "#3498db" },
@@ -25,58 +24,48 @@ function startGame() {
   resultDisplay.textContent = "";
   reactionBox.style.backgroundColor = "";
   reactionBox.textContent = "";
-
   startBtn.disabled = true;
   isClickable = false;
 
-  // If already won, stop the game
   if (level > 10) {
-    reactionBox.textContent = "🎉 Congratulations! You finished all levels!";
-    reactionBox.style.backgroundColor = "#f1c40f"; // celebratory gold
+    reactionBox.textContent = "🎉 Reaction game completed!";
+    reactionBox.style.backgroundColor = "#f1c40f";
     startBtn.disabled = true;
     return;
   }
 
-  // Pick a random color for this level
   const chosen = colors[Math.floor(Math.random() * colors.length)];
-
-  // Show message inside the box with the color name
   reactionBox.textContent = `Wait for the box to turn ${chosen.name.toUpperCase()}...`;
-
-  // Random delay before color change
   const randomDelay = Math.floor(Math.random() * 3000) + 2000;
 
   timeoutId = setTimeout(() => {
     reactionBox.style.backgroundColor = chosen.value;
     reactionBox.textContent = `CLICK! (${chosen.name.toUpperCase()})`;
-
     startTime = Date.now();
     isClickable = true;
   }, randomDelay);
 }
 
 function handleClick() {
-  // If player clicks before allowed
   if (!isClickable) {
     clearTimeout(timeoutId);
     reactionBox.textContent = "❌ Too soon! Click 'Start' to try again.";
-    resultDisplay.textContent = ""; // clear any previous time
+    resultDisplay.textContent = "";
     startBtn.disabled = false;
-    return; // don't call resetGame here, so the "too soon" msg stays
+    return;
   }
 
-  // Valid click
   const reactionTime = (Date.now() - startTime) / 1000;
-  resultDisplay.textContent = `✅ Your reaction time: ${reactionTime.toFixed(3)} seconds`;
+  resultDisplay.textContent = `✅ Reaction time: ${reactionTime.toFixed(3)}s`;
 
-  // Level up
+  storeReactionTime(reactionTime);
+
   level++;
   levelDisplay.textContent = `Level: ${level}`;
 
-  // If reached level 11, show congrats message
   if (level > 10) {
-    reactionBox.textContent = "🎉 Congratulations! You finished all levels!";
-    reactionBox.style.backgroundColor = "#f1c40f"; // celebratory gold
+    reactionBox.textContent = "🎉 Reaction game completed!";
+    reactionBox.style.backgroundColor = "#f1c40f";
     startBtn.disabled = true;
     return;
   }
@@ -90,4 +79,10 @@ function resetGame() {
   startBtn.disabled = false;
   reactionBox.textContent = "Click 'Start' to play next level";
   reactionBox.style.backgroundColor = "";
+}
+
+function storeReactionTime(time) {
+  let reactionTimes = JSON.parse(sessionStorage.getItem("reactionTimes")) || [];
+  reactionTimes[level - 1] = time.toFixed(3); // store at correct level index
+  sessionStorage.setItem("reactionTimes", JSON.stringify(reactionTimes));
 }

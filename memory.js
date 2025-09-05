@@ -1,7 +1,10 @@
 const memoryGrid = document.getElementById("memory-grid");
 const matchMessage = document.getElementById("match-message");
 const levelInfo = document.getElementById("level-info");
+const timerDisplay = document.getElementById("timer");
 
+let timerInterval;
+let startTime;
 let level = 1;
 let firstCard = null;
 let secondCard = null;
@@ -12,21 +15,18 @@ let totalPairs = 0;
 const allSymbols = ['🍎','🍌','🍇','🍉','🍒','🍍','🥝','🍑','🥥','🍓','🍋','🍊','🥭']; 
 
 function startLevel(lvl) {
-  memoryGrid.innerHTML = ""; // clear grid
+  memoryGrid.innerHTML = ""; 
   levelInfo.textContent = `Level ${lvl}`;
   firstCard = null;
   secondCard = null;
   lockBoard = false;
   matchesFound = 0;
 
-  totalPairs = Math.min(3 + lvl,9); // max 9 pairs(18 cards)
+  totalPairs = Math.min(3 + lvl, 9); 
   let selected = allSymbols.slice(0, totalPairs);
-  let symbols = [...selected, ...selected]; // duplicate for pairs
-
-  // Shuffle
+  let symbols = [...selected, ...selected];
   symbols.sort(() => Math.random() - 0.5);
 
-  // Create cards
   symbols.forEach(symbol => {
     const card = document.createElement('div');
     card.classList.add('card');
@@ -37,16 +37,27 @@ function startLevel(lvl) {
   });
 
   adjustGrid(totalPairs);
+  startTimer();
 }
 
 function adjustGrid(pairs) {
-  if (pairs <= 6) {
-    memoryGrid.style.gridTemplateColumns = "repeat(4, 120px)";
-  } else if (pairs <= 9) {
-    memoryGrid.style.gridTemplateColumns = "repeat(5, 110px)";
-  } else {
-    memoryGrid.style.gridTemplateColumns = "repeat(6, 100px)";
-  }
+  if (pairs <= 6) memoryGrid.style.gridTemplateColumns = "repeat(4, 120px)";
+  else if (pairs <= 9) memoryGrid.style.gridTemplateColumns = "repeat(5, 110px)";
+  else memoryGrid.style.gridTemplateColumns = "repeat(6, 100px)";
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  startTime = Date.now();
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    timerDisplay.textContent = `Time: ${elapsed}s`;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  return Math.floor((Date.now() - startTime) / 1000);
 }
 
 function flipCard() {
@@ -65,7 +76,6 @@ function flipCard() {
   lockBoard = true;
 
   if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
-    // Match
     showMatchMessage();
     disableCards();
     matchesFound++;
@@ -74,7 +84,6 @@ function flipCard() {
       setTimeout(nextLevel, 1200);
     }
   } else {
-    // Not a match
     setTimeout(unflipCards, 1000);
   }
 }
@@ -100,28 +109,28 @@ function resetCards() {
 function showMatchMessage() {
   matchMessage.textContent = "Matched!";
   matchMessage.classList.add("show");
-  setTimeout(() => {
-    matchMessage.classList.remove("show");
-  }, 800);
+  setTimeout(() => matchMessage.classList.remove("show"), 800);
 }
 
 function nextLevel() {
+  const levelTime = stopTimer(); // record time or score
+
+  // Store score for this level
+  let memoryScores = JSON.parse(sessionStorage.getItem("memoryScores")) || [];
+  memoryScores[level - 1] = levelTime; // store by level index
+  sessionStorage.setItem("memoryScores", JSON.stringify(memoryScores));
+
   if (level < 10) {
     level++;
-    // show a short encouraging message in your match-message div
-    const message = document.getElementById("match-message");
-    message.textContent = `✅ Level ${level - 1} Complete! Starting Level ${level}...`;
-    message.classList.add("show");
-
-    // hide the message and move to next level after 2 seconds
+    matchMessage.textContent = `✅ Level ${level - 1} Complete! Starting Level ${level}...`;
+    matchMessage.classList.add("show");
     setTimeout(() => {
-      message.classList.remove("show");
+      matchMessage.classList.remove("show");
       startLevel(level);
     }, 2000);
   } else {
-    const message = document.getElementById("match-message");
-    message.textContent = "🎉 Congratulations! You completed all 10 levels!";
-    message.classList.add("show");
+    matchMessage.textContent = "🎉 Congratulations! You completed all 10 levels!";
+    matchMessage.classList.add("show");
   }
 }
 
